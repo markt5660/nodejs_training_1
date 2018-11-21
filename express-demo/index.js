@@ -1,8 +1,48 @@
+const debug = require('debug')('app:startup');
+const config = require('config');
+const helmet = require('helmet');
+const morgan = require('morgan');
 const Joi = require('joi');
 const express = require('express');
+const logger = require('./logger');
+const authenticator = require('./authenticator');
 const app = express();
 
+// Add request processing middleware function
+// to parse request body containing JSON
 app.use(express.json());
+
+// Add request processing middleware function
+// to parse URL encoded payloads
+app.use(express.urlencoded({ extended: true }));
+
+// Add request processing middleware function
+// to specify the "static" page folder in express
+app.use(express.static('public'));
+
+// Add request processing middleware function
+// to handle HTTP headers
+app.use(helmet());
+
+// Configuration
+console.log('Application name: ' + config.get('name'));
+console.log('Mail Server: ' + config.get('mail.host'));
+console.log('Mail Password: ' + config.get('mail.password'));
+
+// Add request processing middleware function
+// to log HTTP requests
+if (app.get('env') === 'development') {
+    app.use(morgan('tiny'));
+    debug('Morgan enabled...');
+}
+
+// Add request processing middleware function
+// to log the request
+app.use(logger);
+
+// Add request processing middleware function
+// to authenticate the request
+app.use(authenticator);
 
 const courses = [
     { id: 1, name: 'courseA' },
@@ -69,7 +109,6 @@ app.delete('/api/courses/:id', (req, res) => {
     // Return the deleted course
     res.send(course);
 });
-
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
