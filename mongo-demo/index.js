@@ -37,13 +37,18 @@ async function createCourse () {
 }
 
 async function getCourses () {
-    // MongoDB logical query operators
-    // or
-    // and
+    // Regular expressions will match more than the simple 'author'
+    // match defined below (which is an exact match)
     const courses = await Course
         // .find({ author:'Mosh', isPublished: true })
-        .find()
-        .or([ { author: 'Mosh' }, { isPublished: true } ])
+        // Starts with 'Mosh' (case-insensitive)
+        .find({ author: /^Mosh/i })
+
+        // Ends with 'Hamidani' (case-insensitive)
+        .find({ author: /Hamidani$/i })
+
+        // Contains 'Mosh' (zero or more characters before and zero or more after)
+        .find({ author: /.*Mosh.*/ })
         .limit(10)
         .sort({ name: 1 })
         .select({ name: 1, tags: 1});
