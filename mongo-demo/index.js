@@ -37,20 +37,14 @@ async function createCourse () {
 }
 
 async function getCourses () {
-    // Regular expressions will match more than the simple 'author'
-    // match defined below (which is an exact match)
+    const pageNumber = 2;
+    const pageSize = 10;
+
     const courses = await Course
-        // .find({ author:'Mosh', isPublished: true })
-        // Starts with 'Mosh' (case-insensitive)
-        .find({ author: /^Mosh/i })
-
-        // Ends with 'Hamidani' (case-insensitive)
-        .find({ author: /Hamidani$/i })
-
-        // Contains 'Mosh' (zero or more characters before and zero or more after)
-        .find({ author: /.*Mosh.*/ })
-        .limit(10)
+        .find({ author:'Mosh', isPublished: true })
+        .skip((pageNumber - 1) *pageSize)
+        .limit(pageSize)
         .sort({ name: 1 })
-        .select({ name: 1, tags: 1});
+        .select({ name: 1, tags: 1 })
     console.log(courses);
 }
