@@ -20,7 +20,10 @@ const courseSchema = new mongoose.Schema({
 
 const Course = mongoose.model('Course', courseSchema);
 
-getCourses();
+//createCourse();
+//getCourses();
+//updateCourse('5bf9eb5a783a5522ecbdee27');
+removeCourse('5bf9eb5a783a5522ecbdee27');
 
 async function createCourse () {
     // Create a new course (object) from the Mongoose model (class)
@@ -42,9 +45,42 @@ async function getCourses () {
 
     const courses = await Course
         .find({ author:'Mosh', isPublished: true })
-        .skip((pageNumber - 1) *pageSize)
         .limit(pageSize)
         .sort({ name: 1 })
         .select({ name: 1, tags: 1 })
     console.log(courses);
+}
+
+// Query first approach
+/*
+async function updateCourse (id) {
+    const course = await Course.findById(id);
+    if (!course) {
+        console.log('id not found', id);
+        return;
+    }
+
+    course.isPublished = true;
+    course.author = 'Another Author';
+
+    const result = await course.save();
+    console.log(result);
+}
+*/
+
+// Update first approach
+async function updateCourse (id) {
+    const course = await Course.findByIdAndUpdate(id, {
+        $set: {
+            author: 'Jason',
+            isPublished: false
+        }
+    }, { new: true });
+    console.log(course);
+}
+
+async function removeCourse (id) {
+//    const result = await Course.deleteOne({ _id: id });
+    const course = await Course.findByIdAndRemove(id);
+    console.log(course);
 }
