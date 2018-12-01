@@ -1,20 +1,7 @@
-const Joi = require('joi');
+const { Genre, validate } = require('../models/genre');
 const mongoose = require('mongoose');
 const express = require('express');
 const router = express.Router();
-
-/*
-** VIDLY Genre Schema and Model (via Mongoose)
-*/
-
-const Genre = mongoose.model('Genre', new mongoose.Schema({
-    name: { 
-        type: String, 
-        required: true,
-        minlength: 5,
-        maxlength: 50
-    }
-}));
 
 
 /*
@@ -36,7 +23,7 @@ router.get('/:id', async (req, res) => {
 
 // Add new genre
 router.post('/', async (req, res) => {
-    const { error } = validateGenre(req.body);
+    const { error } = validate(req.body);
     if (error) return res.status(400).send(error.details[0].message);
 
     let genre = new Genre({
@@ -56,7 +43,7 @@ router.post('/', async (req, res) => {
 
 // Update existing genre
 router.put('/:id', async (req, res) => {
-    const { error } = validateGenre(req.body);
+    const { error } = validate(req.body);
     if (error) return res.status(400).send(error.details[0].message);
 
     const genre = await Genre.findByIdAndUpdate(req.params.id,
@@ -74,14 +61,6 @@ router.delete('/:id', async (req, res) => {
     if (!genre) return res.status(404).send('The genre with the given ID was not found');
     res.send(genre);
 });
-
-
-// Genre support: validate incoming genre information
-function validateGenre (genre) {
-    return Joi.validate(genre, {
-        name: Joi.string().min(3).required()
-    });
-}
 
 
 module.exports = router;
