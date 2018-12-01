@@ -8,11 +8,32 @@ mongoose.connect('mongodb://192.168.1.24/playground')
 // support for MongoDB
 
 const courseSchema = new mongoose.Schema({
-    name: String,
+    name: { 
+        type: String, 
+        required: true,
+        minlength: 5,
+        maxlength: 255,
+        // match: /pattern/
+    },
+    category: {
+        type: String,
+        required: true,
+        enum: ['web','mobile','network']
+    },
     author: String,
     tags: [ String ],
     date: { type: Date, default: Date.now },
-    isPublished: Boolean
+    isPublished: Boolean,
+    price: {
+        type: Number,
+        required: function () {
+            // Price is only required on "published" courses
+            // (cannot use function [arrow] notation because we need to reference "this")
+            return this.isPublished;
+        },
+        min: 10,
+        max: 200
+    }
 });
 
 // Once a schema has been defined, it can be compiled
@@ -20,23 +41,24 @@ const courseSchema = new mongoose.Schema({
 
 const Course = mongoose.model('Course', courseSchema);
 
-//createCourse();
-//getCourses();
-//updateCourse('5bf9eb5a783a5522ecbdee27');
-removeCourse('5bf9eb5a783a5522ecbdee27');
-
 async function createCourse () {
     // Create a new course (object) from the Mongoose model (class)
     const course = new Course({
         name: 'Angular Course',
+        category: '-',
         author: 'Mosh',
         tags: ['angular', 'frontend'],
-        isPublished: true
+        isPublished: true,
+        price: 15
     });
 
     // Save new objects to the MongoDB via Mongoose asynchronously
-    const result = await course.save();
-    console.log(result);
+    try {
+        const result = await course.save();
+        console.log(result);
+    } catch (ex) {
+        console.log(ex.message);
+    }
 }
 
 async function getCourses () {
@@ -84,3 +106,9 @@ async function removeCourse (id) {
     const course = await Course.findByIdAndRemove(id);
     console.log(course);
 }
+
+
+createCourse();
+//getCourses();
+//updateCourse('5bf9eb5a783a5522ecbdee27');
+//removeCourse('5bf9eb5a783a5522ecbdee27');
