@@ -27,14 +27,14 @@ const courseSchema = new mongoose.Schema({
             // Custom asynchronous validator
             isAsync: true,
             validator: function (v, callback) {
-                // use timeout to simulate 5 sec "read" from external source
+                // use timeout to simulate 1 sec "read" from external source
                 // (DB, file system, network, etc.)
                 setTimeout(() => {
                     // Normally, this would use the results of the "read"
                     // as part of the validation checks to get the result.
                     const result = v && v.length > 0;
                     callback(result);
-                }, 5000);
+                }, 1000);
             },
             message: 'Course requres at least one tag.'
         }
@@ -62,7 +62,7 @@ async function createCourse () {
     // Create a new course (object) from the Mongoose model (class)
     const course = new Course({
         name: 'Angular Course',
-        category: 'web',
+        category: '-',
         author: 'Mosh',
         //tags: ['angular', 'frontend'],
         tags: null,
@@ -75,7 +75,9 @@ async function createCourse () {
         const result = await course.save();
         console.log(result);
     } catch (ex) {
-        console.log(ex.message);
+        for (field in ex.errors) {
+            console.log(ex.errors[field].message);
+        }
     }
 }
 
