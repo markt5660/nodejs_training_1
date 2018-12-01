@@ -18,7 +18,10 @@ const courseSchema = new mongoose.Schema({
     category: {
         type: String,
         required: true,
-        enum: ['web','mobile','network']
+        enum: ['web','mobile','network'],
+        lowercase: true,
+        // uppercase: true,
+        trim: true
     },
     author: String,
     tags: {
@@ -49,7 +52,9 @@ const courseSchema = new mongoose.Schema({
             return this.isPublished;
         },
         min: 10,
-        max: 200
+        max: 200,
+        get: v => Math.round(v),  // invoked when you "get" the property of the object, not when you read from the DB
+        set: v => Math.round(v)   // invoked when you "set" the property of the object, not when you write to the DB
     }
 });
 
@@ -62,12 +67,12 @@ async function createCourse () {
     // Create a new course (object) from the Mongoose model (class)
     const course = new Course({
         name: 'Angular Course',
-        category: '-',
+        category: 'Web',
         author: 'Mosh',
         //tags: ['angular', 'frontend'],
-        tags: null,
+        tags: ['frontend'],
         isPublished: true,
-        price: 15
+        price: 15.8
     });
 
     // Save new objects to the MongoDB via Mongoose asynchronously
@@ -86,11 +91,13 @@ async function getCourses () {
     const pageSize = 10;
 
     const courses = await Course
-        .find({ author:'Mosh', isPublished: true })
-        .limit(pageSize)
+        //.find({ author:'Mosh', isPublished: true })
+        .find({ _id: '5c02dd831894e036e0e01ad7' })
+        // .skip((pageNumber - 1) * pageSize)
+        // .limit(pageSize)
         .sort({ name: 1 })
-        .select({ name: 1, tags: 1 })
-    console.log(courses);
+        .select({ name: 1, tags: 1, price: 1 });
+    console.log(courses[0].price);
 }
 
 // Query first approach
@@ -128,7 +135,7 @@ async function removeCourse (id) {
 }
 
 
-createCourse();
-//getCourses();
+//createCourse();
+getCourses();
 //updateCourse('5bf9eb5a783a5522ecbdee27');
 //removeCourse('5bf9eb5a783a5522ecbdee27');
