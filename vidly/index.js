@@ -5,10 +5,16 @@ const genres = require('./routes/genres');
 const customers = require('./routes/customers');
 const app = express();
 
-// Connect to MongoDB
+/*
+// Connect to MongoDB at home
 mongoose.connect('mongodb://192.168.1.24/vidly')
     .then(() => console.log('Connected to remote MongoDB...'))
     .catch(err => console.error('Could not connect to to remote MongoDB...', err));
+*/
+// Connect to MongoDB at work
+mongoose.connect('mongodb://localhost/vidly')
+    .then(() => console.log('Connected to local MongoDB...'))
+    .catch(err => console.error('Could not connect to to local MongoDB...', err));
 
 // Add request processing middleware function
 // to parse request body containing JSON

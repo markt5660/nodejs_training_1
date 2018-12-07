@@ -1,6 +1,14 @@
 const mongoose = require('mongoose');
 
+/*
+// When running from home
 mongoose.connect('mongodb://192.168.1.24/playground')
+    .then(() => console.log('connected to remote mongodb...'))
+    .catch(err => console.error('could not connec to to remote mongodb...', err));
+*/
+
+// When running from work
+mongoose.connect('mongodb://localhost/playground')
     .then(() => console.log('connected to remote mongodb...'))
     .catch(err => console.error('could not connec to to remote mongodb...', err));
 
