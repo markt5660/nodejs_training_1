@@ -5,7 +5,7 @@ const mongoose = require('mongoose');
 ** VIDLY Cutomer Schema and Model (via Mongoose)
 */
 
-const Customer = mongoose.model('Customer', new mongoose.Schema({
+const customerSchema = new mongoose.Schema({
     name: { 
         type: String, 
         required: true,
@@ -25,7 +25,9 @@ const Customer = mongoose.model('Customer', new mongoose.Schema({
             message: 'value must be exactly 10 digits.'
         }
     }
-}));
+});
+
+const Customer = mongoose.model('Customer', customerSchema);
 
 
 /*
@@ -49,5 +51,6 @@ function validateCustomer (customer) {
 }
 
 
+exports.customerSchema = customerSchema;
 exports.Customer = Customer;
-exports.validate = validateCustomer;
+exports.validateCustomer = validateCustomer;

@@ -5,14 +5,16 @@ const mongoose = require('mongoose');
 ** VIDLY Genre Schema and Model (via Mongoose)
 */
 
-const Genre = mongoose.model('Genre', new mongoose.Schema({
+const genreSchema = new mongoose.Schema({
     name: { 
         type: String, 
         required: true,
         minlength: 5,
         maxlength: 50
     }
-}));
+});
+
+const Genre = mongoose.model('Genre', genreSchema);
 
 
 /*
@@ -26,6 +28,6 @@ function validateGenre (genre) {
     });
 }
 
-
+exports.genreSchema = genreSchema;
 exports.Genre = Genre;
-exports.validate = validateGenre;
+exports.validateGenre = validateGenre;
