@@ -26,18 +26,14 @@ router.post('/', async (req, res) => {
     const { error } = validateCustomer(req.body);
     if (error) return res.status(400).send(error.details[0].message);
 
-    let customer = new Customer({
+   // Unique "_id" created by "new" operation, not save()
+   const customer = new Customer({
         name: req.body.name,
         phone: req.body.phone,
         isGold: req.body.isGold
     });
-
-    try {
-        customer = await customer.save();
-        res.send(customer);
-    } catch (err) {
-        return res.status(400).send(err.message);
-    }
+    await customer.save();
+    res.send(customer);
 });
 
 // Update an existing customer

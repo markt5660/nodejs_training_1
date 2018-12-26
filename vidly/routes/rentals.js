@@ -56,7 +56,7 @@ router.post('/', async (req, res) => {
 
     try {
         // Update both rentals (new rental) and movies (decrement numberInStock)
-        // as a single transaction
+        // as a single (two-phase commit) transaction using Fawn module
         new Fawn.Task()
             .save('rentals', rental)
             .update('movies', { _id: movie._id }, {

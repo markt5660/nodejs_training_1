@@ -26,19 +26,12 @@ router.post('/', async (req, res) => {
     const { error } = validateGenre(req.body);
     if (error) return res.status(400).send(error.details[0].message);
 
-    let genre = new Genre({
+   // Unique "_id" created by "new" operation, not save()
+   const genre = new Genre({
         name: req.body.name
     });
-
-    try {
-        // overwrite original local object with one created by the DB (includes _id)
-        genre = await genre.save();
-        res.send(genre);
-    } catch (ex) {
-        for (field in ex.errors) {
-            console.log(ex.errors[field].message);
-        }
-    }
+    await genre.save();
+    res.send(genre);
 });
 
 // Update existing genre

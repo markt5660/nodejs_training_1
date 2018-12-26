@@ -30,7 +30,8 @@ router.post('/', async (req, res) => {
     const genre = await Genre.findById(req.body.genreId);
     if (!genre) return res.status(400).send('Invalid genre.');
 
-    let movie = new Movie({
+    // Unique "_id" created by "new" operation, not save()
+    const movie = new Movie({
         title: req.body.title,
         genre: {
             // These properties may only be a subset of the
@@ -41,16 +42,9 @@ router.post('/', async (req, res) => {
         numberInStock: req.body.numberInStock,
         dailyRentalRate: req.body.dailyRentalRate
     });
+    await movie.save();
 
-    try {
-        // overwrite original local object with one created by the DB (includes _id)
-        movie = await movie.save();
-        res.send(movie);
-    } catch (ex) {
-        for (field in ex.errors) {
-            console.log(ex.errors[field].message);
-        }
-    }
+    res.send(movie);
 });
 
 // Update existing genre
