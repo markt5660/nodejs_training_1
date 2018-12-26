@@ -54,23 +54,6 @@ router.post('/', async (req, res) => {
         }
     });
 
-/*
-    try {
-        // overwrite original local object with one created by the DB (includes _id)
-        rental = await rental.save();
-
-        // Update number of movies 'in stock'
-        movies.numberInStock--;
-        movies.save();
-
-        res.send(rental);
-    } catch (ex) {
-        for (field in ex.errors) {
-            console.log(ex.errors[field].message);
-        }
-    }
-*/
-
     try {
         // Update both rentals (new rental) and movies (decrement numberInStock)
         // as a single transaction

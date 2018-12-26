@@ -1,6 +1,7 @@
 const Joi = require('joi');
+Joi.objectId = require('joi-objectid')(Joi);
+
 const mongoose = require('mongoose');
-//const { genreSchema } = require('./genre');
 
 
 /*
@@ -72,8 +73,8 @@ const Rental = mongoose.model('Rental', rentalSchema);
 // Validate incoming rental information
 function validateRental (movie) {
     return Joi.validate(movie, {
-        movieId: Joi.string().required(),
-        customerId: Joi.string().required(),
+        movieId: Joi.objectId().required(),
+        customerId: Joi.objectId().required(),
     });
 }
 
