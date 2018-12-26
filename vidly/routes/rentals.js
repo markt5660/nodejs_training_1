@@ -2,9 +2,14 @@ const { Rental, validateRental } = require('../models/rental');
 const { Movie, validateMovie } = require('../models/movie');
 const { Customer, validateCustomer } = require('../models/customer');
 const mongoose = require('mongoose');
+const Fawn = require('fawn');
 const express = require('express');
 const router = express.Router();
 
+/*
+** Module initialization
+*/
+Fawn.init(mongoose);
 
 /*
 ** Rental routes
@@ -12,7 +17,7 @@ const router = express.Router();
 
 // Get list of rentals
 router.get('/', async (req, res) => {
-    const rentals = await Rental.find().sort({ dueDate: 1 });
+    const rentals = await Rental.find().sort('-dateOut');
     res.send(rentals);
 });
 
@@ -30,31 +35,58 @@ router.post('/', async (req, res) => {
 
     const movie = await Movie.findById(req.body.movieId);
     if (!movie) return res.status(400).send('Invalid movie.');
+    if (movie.numberInStock === 0) return res.status(400).send('Movie out of stock');
 
     const customer = await Customer.findById(req.body.customerId);
     if (!customer) return res.status(400).send('Invalid customer.');
 
     let rental = new Rental({
-        movie: {
-            _id: movie._id,
-            title: movie.title
-        },
         customer: {
             _id: customer._id,
-            name: customer.name
+            name: customer.name,
+            isGold: customer.isGold,
+            phone: customer.phone
         },
-        rentalDate: Date.now(),
-        dueDate: addDays(Date.now(), 14)
+        movie: {
+            _id: movie._id,
+            title: movie.title,
+            dailyRentalRate: movie.dailyRentalRate
+        }
     });
 
+/*
     try {
         // overwrite original local object with one created by the DB (includes _id)
         rental = await rental.save();
+
+        // Update number of movies 'in stock'
+        movies.numberInStock--;
+        movies.save();
+
         res.send(rental);
     } catch (ex) {
         for (field in ex.errors) {
             console.log(ex.errors[field].message);
         }
+    }
+*/
+
+    try {
+        // Update both rentals (new rental) and movies (decrement numberInStock)
+        // as a single transaction
+        new Fawn.Task()
+            .save('rentals', rental)
+            .update('movies', { _id: movie._id }, {
+                $inc: { numberInStock: -1 }
+            })
+            .run();
+
+        // Return new rental for display
+        res.send(rental);
+    } catch (ex) {
+        // If any error occured in the transaction, both
+        // changes to rentals and movies are rolled back.
+        res.status(500).send(`Failure creating rental, ${ex}`);
     }
 });
 
@@ -67,4 +99,6 @@ function addDays(date, days) {
     result.setDate(result.getDate() + days);
     return result;
   }
-  
+
+
+  module.exports = router;

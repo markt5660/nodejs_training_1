@@ -49,7 +49,8 @@ const rentalSchema = new mongoose.Schema({
     },
     dateOut: {
         type: Date,
-        required: true
+        required: true,
+        default: Date.now
     },
     dateReturned: {
         type: Date
