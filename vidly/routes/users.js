@@ -1,3 +1,4 @@
+const _ = require('lodash');
 const { User, validateUser } = require('../models/user');
 const mongoose = require('mongoose');
 const express = require('express');
@@ -30,14 +31,13 @@ router.post('/', async (req, res) => {
     let user = await User.findOne({ email: req.body.email });
     if (user) return res.status(400).send('User already registered');
 
+    // Add new user to the database
     // Unique "_id" created by "new" operation, not save()
-    user = new User({
-        name: req.body.name,
-        email: req.body.email,
-        password: req.body.password
-    });
+    user = new User(_.pick(req.body, ['name', 'email', 'password']));
     await user.save();
-    res.send(user);
+
+    // Return a subset of the new user: leave out password
+    res.send(_.pick(user, ['_id','name', 'email']));
 });
 
 
