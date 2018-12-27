@@ -1,5 +1,6 @@
-const Joi = require('joi');
 const { User } = require('../models/user');
+const Joi = require('joi');
+const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt-nodejs');
 const mongoose = require('mongoose');
 const express = require('express');
@@ -32,11 +33,14 @@ router.post('/', async (req, res) => {
     let user = await User.findOne({ email: req.body.email });
     if (!user) return res.status(400).send('Invalid email or password.');
 
+    // Authenticate the password against the hash
     bcrypt.compare(req.body.password, user.password, function (err, result) {
-        if (!result) return res.status(400).send('Invalid email or password.');
-
-        // otherwise
-        res.send(true);
+        if (!result) {
+            return res.status(400).send('Invalid email or password.');
+        } else {
+            const token = jwt.sign({ _id: user._id }, 'jwtPrivateKey');
+            res.send(token);
+        }
     });
 });
 
