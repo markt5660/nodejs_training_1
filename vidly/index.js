@@ -4,10 +4,11 @@ Joi.objectId = require('joi-objectid')(Joi);
 const express = require('express');
 const mongoose = require('mongoose');
 const home = require('./routes/home');
-const genres = require('./routes/genres');
 const customers = require('./routes/customers');
+const genres = require('./routes/genres');
 const movies = require('./routes/movies');
 const rentals = require('./routes/rentals');
+const users = require('./routes/users');
 const app = express();
 
 /*
@@ -27,10 +28,11 @@ app.use(express.json());
 
 // Add resource routers
 app.use('/', home);
-app.use('/api/genres', genres);
 app.use('/api/customers', customers);
+app.use('/api/genres', genres);
 app.use('/api/movies', movies);
 app.use('/api/rentals', rentals);
+app.use('/api/users', users);
 
 // Start server
 const port = process.env.PORT || 3000;
