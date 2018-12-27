@@ -2,6 +2,7 @@ const { User } = require('../models/user');
 const Joi = require('joi');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt-nodejs');
+const config = require('config');
 const mongoose = require('mongoose');
 const express = require('express');
 const router = express.Router();
@@ -38,7 +39,7 @@ router.post('/', async (req, res) => {
         if (!result) {
             return res.status(400).send('Invalid email or password.');
         } else {
-            const token = jwt.sign({ _id: user._id }, 'jwtPrivateKey');
+            const token = jwt.sign({ _id: user._id }, config.get('jwtPrivateKey'));
             res.send(token);
         }
     });

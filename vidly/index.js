@@ -1,6 +1,7 @@
 const Joi = require('joi');
 Joi.objectId = require('joi-objectid')(Joi);
 
+const config = require('config');
 const express = require('express');
 const mongoose = require('mongoose');
 const auth = require('./routes/auth');
@@ -12,14 +13,19 @@ const rentals = require('./routes/rentals');
 const users = require('./routes/users');
 const app = express();
 
-/*
-// Connect to MongoDB at home
-mongoose.connect('mongodb://192.168.1.24/vidly')
-    .then(() => console.log('Connected to remote MongoDB...'))
-    .catch(err => console.error('Could not connect to to remote MongoDB...', err));
-*/
-// Connect to MongoDB at work
-mongoose.connect('mongodb://localhost/vidly')
+// Verify that the necessary config properties are defined
+if (!config.get('jwtPrivateKey')) {
+    console.error('FATAL ERROR: jwtPrivateKey is not defined.');
+    process.exit(1);
+}
+
+if (!config.get('mongoUrl')) {
+    console.error('FATAL ERROR: mongoUrl is not defined.');
+    process.exit(1);
+}
+
+// Connect to MongoDB
+mongoose.connect(config.get('mongoUrl'))
     .then(() => console.log('Connected to local MongoDB...'))
     .catch(err => console.error('Could not connect to to local MongoDB...', err));
 
