@@ -1,3 +1,4 @@
+const auth = require('../middleware/auth');
 const _ = require('lodash');
 const { User, validateUser } = require('../models/user');
 const bcrypt = require('bcrypt-nodejs');
@@ -10,15 +11,21 @@ const router = express.Router();
 ** User routes
 */
 
-// Get list of users
+// Get list of all users
 router.get('/', async (req, res) => {
-    const users = await User.find().sort({ email: 1 });
+    const users = await User.find().select('-password').sort({ email: 1 });
     res.send(users);
+});
+
+// Get the current user based on the authorization token
+router.get('/me', auth, async (req, res) => {
+    const user = await User.findById(req.user._id).select('-password');
+    res.send(user);
 });
 
 // Get a specific user
 router.get('/:id', async (req, res) => {
-    const user = await User.findById(req.params.id);
+    const user = await User.findById(req.params.id).select('-password');
     if (!user) return res.status(404).send('The user with the given ID was not found');
     res.send(user);
 });
