@@ -3,6 +3,7 @@ Joi.objectId = require('joi-objectid')(Joi);
 
 const express = require('express');
 const mongoose = require('mongoose');
+const auth = require('./routes/auth');
 const home = require('./routes/home');
 const customers = require('./routes/customers');
 const genres = require('./routes/genres');
@@ -28,6 +29,7 @@ app.use(express.json());
 
 // Add resource routers
 app.use('/', home);
+app.use('/api/auth', auth);
 app.use('/api/customers', customers);
 app.use('/api/genres', genres);
 app.use('/api/movies', movies);
