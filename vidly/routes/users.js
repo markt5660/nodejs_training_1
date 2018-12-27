@@ -1,5 +1,6 @@
 const _ = require('lodash');
 const { User, validateUser } = require('../models/user');
+const bcrypt = require('bcrypt-nodejs');
 const mongoose = require('mongoose');
 const express = require('express');
 const router = express.Router();
@@ -34,6 +35,12 @@ router.post('/', async (req, res) => {
     // Add new user to the database
     // Unique "_id" created by "new" operation, not save()
     user = new User(_.pick(req.body, ['name', 'email', 'password']));
+
+    // Hash the password before saving it to the database
+    bcrypt.hash(user.password, null, null, function (err, hash) {
+        user.password = hash;
+    });
+
     await user.save();
 
     // Return a subset of the new user: leave out password
