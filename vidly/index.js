@@ -14,6 +14,8 @@ const users = require('./routes/users');
 const app = express();
 
 // Verify that the necessary config properties are defined
+console.log(`App: ${config.get('name')}`);
+
 if (!config.get('jwtPrivateKey')) {
     console.error('FATAL ERROR: jwtPrivateKey is not defined.');
     process.exit(1);
@@ -24,7 +26,7 @@ if (!config.get('mongoUrl')) {
     process.exit(1);
 }
 
-// Connect to MongoDB
+// Connect to MongoDB (config controlled by env)
 mongoose.connect(config.get('mongoUrl'))
     .then(() => console.log('Connected to local MongoDB...'))
     .catch(err => console.error('Could not connect to to local MongoDB...', err));
