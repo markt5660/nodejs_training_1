@@ -1,3 +1,4 @@
+const auth = require('../middleware/auth');
 const { Customer, validateCustomer } = require('../models/customer');
 const mongoose = require('mongoose');
 const express = require('express');
@@ -22,7 +23,7 @@ router.get('/:id', async (req, res) => {
 });
 
 // Add a new customer
-router.post('/', async (req, res) => {
+router.post('/', auth, async (req, res) => {
     const { error } = validateCustomer(req.body);
     if (error) return res.status(400).send(error.details[0].message);
 
@@ -37,7 +38,7 @@ router.post('/', async (req, res) => {
 });
 
 // Update an existing customer
-router.put('/:id', async (req, res) => {
+router.put('/:id', auth, async (req, res) => {
     const { error } = validateCustomer(req.body);
     if (error) return res.status(400).send(error.details[0].message);
 
@@ -55,7 +56,7 @@ router.put('/:id', async (req, res) => {
 });
 
 // Delete an existing customer
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', auth, async (req, res) => {
     const customer = await Customer.findByIdAndRemove(req.params.id);
     if (!customer) return res.status(404).send('The customer with the given ID was not found');
     res.send(customer);
