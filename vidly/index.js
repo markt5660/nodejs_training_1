@@ -11,6 +11,8 @@ const genres = require('./routes/genres');
 const movies = require('./routes/movies');
 const rentals = require('./routes/rentals');
 const users = require('./routes/users');
+const error = require('./middleware/error');
+
 const app = express();
 
 // Verify that the necessary config properties are defined
@@ -35,7 +37,7 @@ mongoose.connect(config.get('mongoUrl'))
 // to parse request body containing JSON
 app.use(express.json());
 
-// Add resource routers
+// Add standard resource routers
 app.use('/', home);
 app.use('/api/auth', auth);
 app.use('/api/customers', customers);
@@ -43,6 +45,10 @@ app.use('/api/genres', genres);
 app.use('/api/movies', movies);
 app.use('/api/rentals', rentals);
 app.use('/api/users', users);
+
+// Add global exception handler middleware function
+// (should always be the last middleware function registered)
+app.use(error);
 
 // Start server
 const port = process.env.PORT || 3000;
