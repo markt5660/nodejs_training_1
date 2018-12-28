@@ -1,9 +1,15 @@
-const Joi = require('joi');
+const Joi = require('joi');             // RESTful request validation
 Joi.objectId = require('joi-objectid')(Joi);
 
-const config = require('config');
 const express = require('express');
-const mongoose = require('mongoose');
+require('express-async-errors');
+
+const mongoose = require('mongoose');   // mongoDB schemas
+const config = require('config');       // environment configuration params
+
+const winston = require('winston');     // logging
+winston.add(new winston.transports.File({ filename: 'vidly.log' }));
+
 const auth = require('./routes/auth');
 const home = require('./routes/home');
 const customers = require('./routes/customers');

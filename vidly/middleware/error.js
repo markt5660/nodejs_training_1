@@ -1,6 +1,7 @@
+const winston = require('winston');
 
-// Global error handling and logging
 module.exports = function (ex, req, res, next) {
-    // log the exception...
+//  winston.log('error', ex.message);
+    winston.error(ex.message, ex);
     res.status(500).send('Something failed with the server.');
 }
