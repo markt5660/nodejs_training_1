@@ -8,7 +8,7 @@ const mongoose = require('mongoose');   // mongoDB schemas
 const config = require('config');       // environment configuration params
 
 const winston = require('winston');     // logging
-winston.add(new winston.transports.File({ filename: 'vidly.log' }));
+require('winston-mongodb');
 
 const auth = require('./routes/auth');
 const home = require('./routes/home');
@@ -34,8 +34,20 @@ if (!config.get('mongoUrl')) {
     process.exit(1);
 }
 
+const mongoUrl = config.get('mongoUrl');
+
+winston.add(new winston.transports.File({ filename: 'vidly.log' }));
+winston.add(new winston.transports.MongoDB({ db: mongoUrl }));
+
+process.on('uncaughtException', (ex) => {
+    console.log('UNCAUGHT EXCEPTION');
+    winston.error(ex.message, ex);
+});
+
+throw new Error('Something failed during startup.');
+
 // Connect to MongoDB (config controlled by env)
-mongoose.connect(config.get('mongoUrl'))
+mongoose.connect(mongoUrl)
     .then(() => console.log('Connected to local MongoDB...'))
     .catch(err => console.error('Could not connect to to local MongoDB...', err));
 
