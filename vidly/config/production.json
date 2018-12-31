@@ -1,4 +1,4 @@
 {
     "name": "Vidly - [Production]",
-    "mongoUrl": "mongodb://10.108.0.2/vidly"
+    "mongoUrl": "mongodb://192.168.1.24/vidly"
 }

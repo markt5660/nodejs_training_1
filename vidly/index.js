@@ -23,6 +23,7 @@ const app = express();
 
 // Verify that the necessary config properties are defined
 console.log(`App: ${config.get('name')}`);
+console.log(`Env: ${app.get('env')}`);
 
 if (!config.get('jwtPrivateKey')) {
     console.error('FATAL ERROR: jwtPrivateKey is not defined.');
@@ -36,20 +37,30 @@ if (!config.get('mongoUrl')) {
 
 const mongoUrl = config.get('mongoUrl');
 
+
 winston.add(new winston.transports.File({ filename: 'vidly.log' }));
 winston.add(new winston.transports.MongoDB({ db: mongoUrl }));
 
+// Add global error handlers
 process.on('uncaughtException', (ex) => {
-    console.log('UNCAUGHT EXCEPTION');
     winston.error(ex.message, ex);
+    //process.exit(1);
 });
 
-throw new Error('Something failed during startup.');
+process.on('unhandledRejection', (ex) => {
+    winston.error(ex.message, ex);
+    //process.exit(1);
+});
+
+/*** Special force failure - unhandled promise rejection */
+const p = Promise.reject(new Error('Something failed miserably!'));
+p.then (() => console.log('Done'));
+/*** Special force failure - end */
 
 // Connect to MongoDB (config controlled by env)
 mongoose.connect(mongoUrl)
-    .then(() => console.log('Connected to local MongoDB...'))
-    .catch(err => console.error('Could not connect to to local MongoDB...', err));
+    .then(() => console.log(`Connected to local MongoDB [${mongoUrl}] ...`))
+    .catch(err => console.error(`Could not connect to to local MongoDB [${mongoUrl}] ...`, err));
 
 // Add request processing middleware function
 // to parse request body containing JSON
