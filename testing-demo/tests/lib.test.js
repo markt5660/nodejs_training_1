@@ -18,3 +18,13 @@ describe('absolute', () => {
     });
     
 });
+
+describe('greet', () => {
+
+    it('returns welcome message with name input', () => {
+        const result = lib.greet('Mark');
+        expect(result).toMatch(/Mark/);
+        expect(result).toContain('Mark');
+    });
+
+});
