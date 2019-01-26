@@ -1,4 +1,5 @@
 const lib = require('../lib');
+const db = require('../db');
 
 describe('absolute', () => {
 
@@ -64,6 +65,23 @@ describe('registerUser', () => {
         const result = lib.registerUser('Mark');
         expect(result).toMatchObject({ username: 'Mark' });
         expect(result.id).toBeGreaterThan(0);
+    });
+
+});
+
+describe('applyDiscount', () => {
+
+    it('applies 10% discount if customer with ID has > 10 points', () => {
+        // Mock the DB call for this test
+        db.getCustomerSync = function(customerId) {
+            console.log('applyDiscount db.getCustomer() mock');
+            return { id: customerId, points: 12 };
+        };
+
+        // Run the test using the mocked DB call
+        const order = { customerId: 1, totalPrice: 10 };
+        lib.applyDiscount(order);
+        expect(order.totalPrice).toBe(9);
     });
 
 });
