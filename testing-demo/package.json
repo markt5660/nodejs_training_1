@@ -11,7 +11,7 @@
     "jest": "^22.2.2"
   },
   "scripts": {
-    "test": "jest"
+    "test": "jest --watchAll"
   },
   "jest": {
     "verbose": true,
