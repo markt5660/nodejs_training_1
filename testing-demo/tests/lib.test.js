@@ -49,3 +49,21 @@ describe('getProduct', () => {
     });
 
 });
+
+describe('registerUser', () => {
+
+    it('throws when userName is "falsey"', () => {
+        // Test all "falsey" values
+        const testArgs = [null, undefined, NaN, '', 0, false];
+        testArgs.forEach(arg => {
+            expect(() => { lib.registerUser(arg); }).toThrow();
+        });
+    });
+
+    it('returns user object for valid username', () => {
+        const result = lib.registerUser('Mark');
+        expect(result).toMatchObject({ username: 'Mark' });
+        expect(result.id).toBeGreaterThan(0);
+    });
+
+});
