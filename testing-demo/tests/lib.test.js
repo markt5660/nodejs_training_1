@@ -28,3 +28,12 @@ describe('greet', () => {
     });
 
 });
+
+describe('getCurrencies', () => {
+
+    it('returns supported currencies', () => {
+        const result = lib.getCurrencies();
+        expect(result).toEqual(expect.arrayContaining(['AUD','EUR','USD']));
+    });
+
+});
