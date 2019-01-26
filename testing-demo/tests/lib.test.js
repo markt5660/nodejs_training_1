@@ -37,3 +37,15 @@ describe('getCurrencies', () => {
     });
 
 });
+
+describe('getProduct', () => {
+
+    it('returns product with given ID', () => {
+        const result = lib.getProduct(1);
+//      expect(result).toEqual({ id: 1, price: 10 });  // too specific
+        expect(result).toMatchObject({ id: 1 });
+        expect(result).toMatchObject({ price: 10 });
+        expect(result).toHaveProperty('id', 1);
+    });
+
+});
