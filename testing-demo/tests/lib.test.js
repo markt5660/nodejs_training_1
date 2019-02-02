@@ -90,22 +90,17 @@ describe('applyDiscount', () => {
 describe('notifyCustomer', () => {
 
     it('sends an email to customer for the given order', () => {
-        // Mock the DB call for this test
-        db.getCustomerSync = function(customerId) {
-            console.log('notifyCustomer db.getCustomer() mock');
-            return { id: customerId, email:'a@b.com' };
-        };
-
-        // Mock the mail call for this test
-        let mailSent = false;
-        mail.send = function(to, subject) {
-            console.log('notifyCustomer mail.send() mock');
-            mailSent = true;
-        };
+        // Create mocks for the test
+        db.getCustomerSync = jest.fn().mockReturnValue({ email:'a@b.com' });
+        mail.send = jest.fn();
 
         // Run the test using the mock DB and mail calls
         lib.notifyCustomer({ customerId: 10 });
-        expect(mailSent).toBe(true);
+
+        // Verify the test results
+        expect(mail.send).toHaveBeenCalled();
+        expect(mail.send.mock.calls[0][0]).toBe('a@b.com');
+        expect(mail.send.mock.calls[0][1]).toMatch(/order/);
     });
 
 });
