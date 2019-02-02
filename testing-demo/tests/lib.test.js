@@ -1,5 +1,6 @@
 const lib = require('../lib');
 const db = require('../db');
+const mail = require('../mail');
 
 describe('absolute', () => {
 
@@ -82,6 +83,29 @@ describe('applyDiscount', () => {
         const order = { customerId: 1, totalPrice: 10 };
         lib.applyDiscount(order);
         expect(order.totalPrice).toBe(9);
+    });
+
+});
+
+describe('notifyCustomer', () => {
+
+    it('sends an email to customer for the given order', () => {
+        // Mock the DB call for this test
+        db.getCustomerSync = function(customerId) {
+            console.log('notifyCustomer db.getCustomer() mock');
+            return { id: customerId, email:'a@b.com' };
+        };
+
+        // Mock the mail call for this test
+        let mailSent = false;
+        mail.send = function(to, subject) {
+            console.log('notifyCustomer mail.send() mock');
+            mailSent = true;
+        };
+
+        // Run the test using the mock DB and mail calls
+        lib.notifyCustomer({ customerId: 10 });
+        expect(mailSent).toBe(true);
     });
 
 });
