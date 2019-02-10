@@ -1,0 +1,5 @@
+{
+    "name": "Vidly - [Test]",
+    "mongoUrl": "mongodb://localhost/vidly",
+    "jwtPrivateKey": "1234"
+}
