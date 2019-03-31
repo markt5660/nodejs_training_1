@@ -1,5 +1,5 @@
 {
     "name": "Vidly - [No mode]",
-    "mongoUrl": "mongodb://localhost/vidly",
-    "jwtPrivateKey": ""
+    "jwtPrivateKey": "",
+    "mongoUrl": "mongodb://localhost/vidly"
 }

@@ -1,3 +1,4 @@
 {
-    "name": "Vidly - [Development]"
+    "name": "Vidly - [Development]",
+    "mongoUrl": "mongodb://localhost/vidly"
 }
