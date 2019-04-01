@@ -1,6 +1,7 @@
 const request = require('supertest');
 const {Genre} = require('../../models/genre');
 const {User} = require('../../models/user');
+const mongoose = require('mongoose');
 
 let server;
 
@@ -10,8 +11,8 @@ describe('/api/genres', () => {
     });
 
     afterEach(async () => { 
+        await Genre.deleteMany({}); // replaces Genre.remove() - deprecated
         server.close();
-        await Genre.remove({});
     });
 
     describe('GET /', () => {
@@ -45,6 +46,15 @@ describe('/api/genres', () => {
             // No special setup, empty document store preferred
 
             const resp = await request(server).get('/api/genres/1');
+
+            expect(resp.status).toBe(404);
+        });
+
+        it('should return a 404 if no genre found for given ID', async () => {
+            // No special setup, empty document store preferred
+            const id = mongoose.Types.ObjectId();
+
+            const resp = await request(server).get('/api/genres/' + id);
 
             expect(resp.status).toBe(404);
         });
