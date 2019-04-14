@@ -64,6 +64,7 @@ describe('/api/genres', () => {
         let token;
         let gName;
 
+        // Default 'Happy Path' execution
         const exec = async () => {
             return await request(server)
                 .post('/api/genres')
@@ -113,5 +114,137 @@ describe('/api/genres', () => {
             expect(res.body).toHaveProperty('_id');
             expect(res.body).toHaveProperty('name', 'genre1');
         });
+    });
+
+    describe('PUT /:id', () => {
+        let id;
+        let token;
+        let newName;
+
+        // Default 'Happy Path' execution
+        const exec = async () => {
+            return await request(server)
+                .put('/api/genres/' + id)
+                .set('x-auth-token', token)
+                .send({ name: newName });
+        };
+
+        beforeEach(async () => {
+            // Create genre entry that will be updated
+            const genre = new Genre({ name: 'genre1' });
+            await genre.save();
+
+            id = genre._id;
+            token = new User().generateAuthToken();
+            newName = 'genreNew';
+        });
+
+        it('should return 401 if client not logged in', async () => {
+            token = ''; // override default creation of valid token
+
+            const res = await exec();
+
+            expect(res.status).toBe(401);
+        });
+
+        it('should return 400 if genre < 5 chars', async () => {
+            newName = '1234'; // override default genre name
+
+            const res = await exec();
+
+            expect(res.status).toBe(400);
+        });
+
+        it('should return 400 if genre > 50 chars', async () => {
+            newName = new Array(52).join('a'); // override default genre name
+
+            const res = await exec();
+
+            expect(res.status).toBe(400);
+        });
+
+        it('should return a 404 if invalid id is passed', async () => {
+            id = 1;
+
+            const res = await exec();
+
+            expect(res.status).toBe(404);
+        });
+
+        it('should return a 404 if no genre found for given ID', async () => {
+            id = mongoose.Types.ObjectId();
+
+            const res = await exec();
+
+            expect(res.status).toBe(404);
+        });
+
+        it('should save the new genre if valid', async () => {
+            const res = await exec();
+
+            const genre = await Genre.find({ name: newName });
+            expect(genre).not.toBeNull();
+        });
+
+        it('should return the new genre if valid', async () => {
+            const res = await exec();
+
+            expect(res.body).toHaveProperty('_id');
+            expect(res.body).toHaveProperty('name', newName);
+        });
+    });
+
+    describe('DELETE /:id', () => {
+        let id;
+        let token;
+        let gName;
+
+        // Default 'Happy Path' execution
+        const exec = async () => {
+            return await request(server)
+                .delete('/api/genres/' + id)
+                .set('x-auth-token', token);
+        };
+
+        beforeEach(async () => {
+            // Create genre entry that will be updated
+            const genre = new Genre({ name: 'genre1' });
+            await genre.save();
+
+            id = genre._id;
+            token = new User({ isAdmin: true }).generateAuthToken();
+            gName = 'genre1';
+        });
+
+        it('should return 401 if client not logged in', async () => {
+            token = ''; // override default creation of valid token
+
+            const res = await exec();
+
+            expect(res.status).toBe(401);
+        });
+
+        it('should return a 404 if invalid id is passed', async () => {
+            id = 1;
+
+            const res = await exec();
+
+            expect(res.status).toBe(404);
+        });
+
+        it('should remove the new genre if valid', async () => {
+            const res = await exec();
+
+            const genre = await Genre.findById(id);
+            expect(genre).toBeNull();
+        });
+
+        it('should return the new genre if valid', async () => {
+            const res = await exec();
+
+            expect(res.body).toHaveProperty('_id');
+            expect(res.body).toHaveProperty('name', gName);
+        });
+
     });
 });
