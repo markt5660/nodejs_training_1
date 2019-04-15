@@ -12,7 +12,7 @@ describe('/api/genres', () => {
 
     afterEach(async () => { 
         await Genre.deleteMany({}); // replaces Genre.remove() - deprecated
-        server.close();
+        await server.close();
     });
 
     describe('GET /', () => {
@@ -168,7 +168,7 @@ describe('/api/genres', () => {
 
             const res = await exec();
 
-            expect(res.status).toBe(404);
+            expect(res.status).toBe(500);
         });
 
         it('should return a 404 if no genre found for given ID', async () => {
@@ -229,7 +229,7 @@ describe('/api/genres', () => {
 
             const res = await exec();
 
-            expect(res.status).toBe(404);
+            expect(res.status).toBe(500);
         });
 
         it('should remove the new genre if valid', async () => {

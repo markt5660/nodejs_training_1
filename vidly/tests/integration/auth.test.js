@@ -2,19 +2,20 @@ const request = require('supertest');
 const {Genre} = require('../../models/genre');
 const {User} = require('../../models/user');
 
-let server;
-
 describe('auth middleware', () => {
+
+    let server;
+    let token;
+
     beforeEach(() => { 
         server = require('../../index'); 
+        token = new User().generateAuthToken();
     });
 
     afterEach(async () => {
         await Genre.deleteMany({}); // replaces Genre.remove() - deprecated
-        server.close();
+        await server.close();
     });
-
-    let token;
 
     const exec = () => {
         return request(server)
@@ -22,10 +23,6 @@ describe('auth middleware', () => {
             .set('x-auth-token', token)
             .send({ name: 'genre1' });
     };
-
-    beforeEach(() => { 
-        token = new User().generateAuthToken();
-    });
 
     it('should return 401 if no token is provided', async () => {
         token = ''; // Override default with empty token
