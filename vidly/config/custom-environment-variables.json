@@ -1,3 +1,4 @@
 {
-    "jwtPrivateKey": "vidly_jwtPrivateKey"
+    "jwtPrivateKey": "vidly_jwtPrivateKey",
+    "mongoUrl": "vidly_db"
 }
