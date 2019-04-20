@@ -7,7 +7,8 @@ require('./startup/logging')();         // Add logging
 require('./startup/config')();          // Add configuration
 require('./startup/database')();        // Add database
 require('./startup/routes')(app);       // Add route handlers
-require('./startup/validation')();      // Joi validation
+require('./startup/validation')();      // Add Joi validation
+require('./startup/prod')(app);         // Add production support
 
 // Start server
 const port = process.env.PORT || 3000;

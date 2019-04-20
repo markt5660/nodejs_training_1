@@ -5,7 +5,11 @@
   "main": "index.js",
   "scripts": {
     "test": "jest --watchAll --verbose",
-    "cover": "jest --watchAll --verbose --coverage"
+    "cover": "jest --watchAll --verbose --coverage",
+    "start": "node index.js"
+  },
+  "engines": {
+    "node": "8.12.0"
   },
   "jest": {
     "verbose": true,
@@ -16,10 +20,12 @@
   "license": "ISC",
   "dependencies": {
     "bcrypt-nodejs": "0.0.3",
+    "compression": "^1.7.4",
     "config": "^3.0.1",
     "express": "^4.16.4",
     "express-async-errors": "^3.1.1",
     "fawn": "^2.1.5",
+    "helmet": "^3.16.0",
     "joi": "^14.3.0",
     "joi-objectid": "^2.0.0",
     "jsonwebtoken": "^8.4.0",
