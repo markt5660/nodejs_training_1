@@ -1,5 +1,4 @@
 const Joi = require('joi');
-const moment = require('moment');
 const auth = require('../middleware/auth');
 const validate = require('../middleware/validate');
 const { Rental} = require('../models/rental');
@@ -16,19 +15,14 @@ const router = express.Router();
 router.post('/', [auth, validate(validateReturn)], async (req, res) => {
 
     // Fetch rental
-    const rental = await Rental.findOne({
-        'customer._id': req.body.customerId,
-        'movie._id': req.body.movieId
-    });
+    const rental = await Rental.lookup(req.body.customerId, req.body.movieId);
 
     // Validate the rental
     if (!rental) return res.status(404).send('Rental not found for customer/movie');
     if (rental.dateReturned) return res.status(400).send('Rental already processed');
 
-    // Update the return date
-    rental.dateReturned = new Date();
-    const rentalDays = moment().diff(rental.dateOut, 'days');
-    rental.rentalFee = rentalDays * rental.movie.dailyRentalRate;
+    // Update the rental
+    rental.return();
     await rental.save();
 
     // Increment the movie stock (don't need a local copy)
@@ -36,10 +30,14 @@ router.post('/', [auth, validate(validateReturn)], async (req, res) => {
         $inc: { numberInStock: 1 }
     });
 
-    return res.status(200).send(rental);
+    return res.send(rental);
 
 });
 
+
+/*
+** Support methods
+*/
 
 // Validate incoming return information
 function validateReturn (request) {
