@@ -6,8 +6,6 @@ const mongoose = require('mongoose');
 const moment = require('moment');
 const expect = require('chai').expect;
 
-const winston = require('winston');     // logging
-
 describe('/api/returns', function () {
 
     let server;
@@ -157,7 +155,7 @@ describe('/api/returns', function () {
         expect(movieInDb.numberInStock).to.be.eql(movie.numberInStock + 1);
     });
 
-    it ('should return the updated rental if request is valid', async function () {
+    it('should return the updated rental if request is valid', async function () {
         // No special setup
 
         const res = await exec();
