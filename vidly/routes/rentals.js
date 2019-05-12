@@ -1,4 +1,5 @@
 const auth = require('../middleware/auth');
+const validate = require('../middleware/validate');
 const { Rental, validateRental } = require('../models/rental');
 const { Movie, validateMovie } = require('../models/movie');
 const { Customer, validateCustomer } = require('../models/customer');
@@ -30,14 +31,13 @@ router.get('/:id', async (req, res) => {
 });
 
 // Add new rental
-router.post('/', auth, async (req, res) => {
-    const { error } = validateRental(req.body);
-    if (error) return res.status(400).send(error.details[0].message);
-
+router.post('/', [auth, validate(validateRental)], async (req, res) => {
+    // Look up the movie
     const movie = await Movie.findById(req.body.movieId);
     if (!movie) return res.status(400).send('Invalid movie.');
     if (movie.numberInStock === 0) return res.status(400).send('Movie out of stock');
 
+    // Look up the customer
     const customer = await Customer.findById(req.body.customerId);
     if (!customer) return res.status(400).send('Invalid customer.');
 

@@ -17,10 +17,6 @@ module.exports = function (app) {
     // to parse request body containing JSON
     app.use(express.json());
 
-    // Add global exception handler middleware function
-    // (should always be the last middleware function registered)
-    app.use(error);
-
     // Add standard route handlers
     app.use('/', home);
     app.use('/api/auth', auth);
@@ -30,5 +26,9 @@ module.exports = function (app) {
     app.use('/api/rentals', rentals);
     app.use('/api/returns', returns);
     app.use('/api/users', users);
+
+    // Add global exception handler middleware function
+    // (should always be the last middleware function registered)
+    app.use(error);
 
 }

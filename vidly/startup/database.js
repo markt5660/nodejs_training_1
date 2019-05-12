@@ -11,6 +11,6 @@ module.exports = function () {
     // log the failure and terminate the process
     const mongoUrl = config.get('mongoUrl');
     mongoose.connect(mongoUrl)
-        .then(() => winston.info(`Connected to ${mongoUrl}...`));
+        .then(() => winston.info('Connected to local MongoDB...'));
 
 }

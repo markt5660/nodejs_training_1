@@ -14,7 +14,7 @@ const router = express.Router();
 // Update rental by "posting" a new return
 router.post('/', [auth, validate(validateReturn)], async (req, res) => {
 
-    // Fetch rental
+    // Fetch the rental
     const rental = await Rental.lookup(req.body.customerId, req.body.movieId);
 
     // Validate the rental

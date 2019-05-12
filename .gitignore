@@ -36,9 +36,6 @@ build/Release
 node_modules/
 jspm_packages/
 
-# Jest coverage reports
-coverage/
-
 # TypeScript v1 declaration files
 typings/
 

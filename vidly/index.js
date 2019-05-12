@@ -7,8 +7,11 @@ require('./startup/logging')();         // Add logging
 require('./startup/config')();          // Add configuration
 require('./startup/database')();        // Add database
 require('./startup/routes')(app);       // Add route handlers
-require('./startup/validation')();      // Add Joi validation
-require('./startup/prod')(app);         // Add production support
+require('./startup/validation')();      // Joi validation
+
+// Verify that the necessary config properties are defined
+//winston.info(`App: ${config.get('name')}`);
+//winston.info(`DB : ${config.get('mongoUrl')}`);
 
 // Start server
 const port = process.env.PORT || 3000;

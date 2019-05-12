@@ -1,5 +1,6 @@
-const auth = require('../middleware/auth');
 const _ = require('lodash');
+const auth = require('../middleware/auth');
+const validate = require('../middleware/validate');
 const { User, validateUser } = require('../models/user');
 const bcrypt = require('bcrypt-nodejs');
 const mongoose = require('mongoose');
@@ -31,10 +32,7 @@ router.get('/:id', async (req, res) => {
 });
 
 // Add a new user ("Register")
-router.post('/', async (req, res) => {
-    const { error } = validateUser(req.body);
-    if (error) return res.status(400).send(error.details[0].message);
-
+router.post('/', [validate(validateUser)], async (req, res) => {
     // Verify that user email doesn't already exist
     let user = await User.findOne({ email: req.body.email });
     if (user) return res.status(400).send('User already registered');
